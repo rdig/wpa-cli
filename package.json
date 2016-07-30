@@ -39,5 +39,8 @@
     "eslint": "^3.2.0",
     "eslint-watch": "^2.1.14",
     "mocha": "^2.5.3"
+  },
+  "dependencies": {
+    "cli": "^0.11.2"
   }
 }
