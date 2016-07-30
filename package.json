@@ -8,8 +8,8 @@
     "wpu": "./bin/wpu.js"
   },
   "scripts": {
-    "lint": "eslint -c .eslintrc bin/ index.js",
-    "lint:watch": "esw -f simple-detail -w -c ./.eslintrc bin/ index.js",
+    "lint": "eslint -c .eslintrc bin/ includes/ index.js",
+    "lint:watch": "esw -f simple-detail -w -c ./.eslintrc bin/ includes/ index.js",
     "test": "mocha --reporter spec --ui bdd ./tests",
     "test:watch": "mocha --reporter spec --ui bdd --watch ./tests"
   },
@@ -33,7 +33,11 @@
     "url": "https://github.com/rdig/wordpress-update-cli/issues"
   },
   "homepage": "https://github.com/rdig/wordpress-update-cli#readme",
-  "files": [],
+  "files": [
+    "index.js",
+    "bin",
+    "includes"
+  ],
   "devDependencies": {
     "chai": "^3.5.0",
     "eslint": "^3.2.0",

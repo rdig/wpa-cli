@@ -25,3 +25,5 @@ jspm_packages
 *.diff
 *.patch
 .tern-project
+tests
+wordpress

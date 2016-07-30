@@ -1,19 +1,19 @@
 #!/usr/bin/env node
 
 var cli = require('cli');
-var packageJson = require('../package.json');
+var packageJson = require(__dirname + '/../package.json');
+var wpUpdate = require('../includes/wpUpdate.js');
 
 cli.setApp('wpu', packageJson.version);
 
 cli.enable('version', 'status');
 
 cli.parse({
-	path: ['p', 'Path were Wordpress install resides', 'file', './']
+	path: ['p', 'Path were Wordpress install resides', 'file', '/']
 });
 
 cli.main(function() {
-	this.spinner('Starting update...');
-	setTimeout(function() {
-		cli.spinner('Update done.', true);
-	}, 5000);
+
+	var wpPath = wpUpdate.formatPath(this.options.path);
+
 });
