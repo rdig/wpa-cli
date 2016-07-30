@@ -7,7 +7,10 @@
   "bin": {
     "gulp": "./bin/wpu.js"
   },
-  "scripts": {},
+  "scripts": {
+    "lint": "eslint -c .eslintrc bin/ index.js",
+	"lint:watch": "esw -f simple-detail -w -c ./.eslintrc bin/ index.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rdig/wordpress-update-cli.git"
@@ -28,5 +31,9 @@
     "url": "https://github.com/rdig/wordpress-update-cli/issues"
   },
   "homepage": "https://github.com/rdig/wordpress-update-cli#readme",
-  "files": []
+  "files": [],
+  "devDependencies": {
+    "eslint": "^3.2.0",
+    "eslint-watch": "^2.1.14"
+  }
 }
