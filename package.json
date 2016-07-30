@@ -5,11 +5,13 @@
   "description": "NPM command-line utility to update Wordpress installations",
   "main": "index.js",
   "bin": {
-    "gulp": "./bin/wpu.js"
+    "wpu": "./bin/wpu.js"
   },
   "scripts": {
     "lint": "eslint -c .eslintrc bin/ index.js",
-	"lint:watch": "esw -f simple-detail -w -c ./.eslintrc bin/ index.js"
+    "lint:watch": "esw -f simple-detail -w -c ./.eslintrc bin/ index.js",
+    "test": "mocha --reporter spec --ui bdd ./tests",
+    "test:watch": "mocha --reporter spec --ui bdd --watch ./tests"
   },
   "repository": {
     "type": "git",
@@ -33,7 +35,9 @@
   "homepage": "https://github.com/rdig/wordpress-update-cli#readme",
   "files": [],
   "devDependencies": {
+    "chai": "^3.5.0",
     "eslint": "^3.2.0",
-    "eslint-watch": "^2.1.14"
+    "eslint-watch": "^2.1.14",
+    "mocha": "^2.5.3"
   }
 }
