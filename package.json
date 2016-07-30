@@ -1,0 +1,32 @@
+{
+  "private": false,
+  "name": "wordpress-update-cli",
+  "version": "0.0.1",
+  "description": "NPM command-line utility to update Wordpress installations",
+  "main": "index.js",
+  "bin": {
+    "gulp": "./bin/wpu.js"
+  },
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rdig/wordpress-update-cli.git"
+  },
+  "keywords": [
+    "wordpress",
+    "update",
+    "cli"
+  ],
+  "author": {
+    "name": "Raul Glogovetan",
+    "email": "raul@glogovetan.com",
+    "url": "https://glogovetan.com/"
+  },
+  "contributors": [],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rdig/wordpress-update-cli/issues"
+  },
+  "homepage": "https://github.com/rdig/wordpress-update-cli#readme",
+  "files": []
+}
