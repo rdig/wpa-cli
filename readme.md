@@ -6,7 +6,7 @@ The idea of it is to not fiddle with wordpres versions  / updates, just focus on
 
 At the moment it only features an update function, which will get your installation to the latest stable version, but the plan is to also install, change versions, deploy your wordpress files with ease.
 
-Check the [roadmap](readme.md#roadmap-todo) for more information.
+Check the [roadmap](readme.md#roadmap--todo) for more information.
 
 ## How to use
 
@@ -48,7 +48,7 @@ The way the update works, is to overwrite the default files with the new version
 
 Since it's only function at the moment is update, it still need an initial instalation of Wordpress. This will be changed in the future as more functionality is added.
 
-Check the [roadmap](readme.md#roadmap-todo) for more information.
+Check the [roadmap](readme.md#roadmap--todo) for more information.
 
 ## Known issues
 
