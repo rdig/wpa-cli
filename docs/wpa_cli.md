@@ -2,7 +2,7 @@
 
 ### Options
 
-wpa-cli has few options, but is wise to know about them. By default no options are passed.
+wpa-cli has few options, but it's wise to know about them. By default no options are passed.
 The `-p` / `--path` option is required, if it's called without it, the app will exit with an error.
 
 - `-p`, `--path <PATH>` The path where your local Wordpress installation resides
