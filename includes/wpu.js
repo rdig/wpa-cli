@@ -1,9 +1,4 @@
-/*
- * Please make note that this is not the default `fs` package from `node.js`.
- * This is an external package which adds more functionality than the vanilla one, but also keeps
- * theoriginal methods.
- */
-var fs = require('fs-extra');
+var fs = require('fs');
 var request = require('request');
 var tar = require('tar-fs')
 var gunzip = require('gunzip-maybe');
