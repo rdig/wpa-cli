@@ -7,7 +7,9 @@
   "bin": {
     "wpa-cli": "./bin/wpa_cli.js"
   },
+  "man": "wpa-cli.1",
   "scripts": {
+    "prepublish": "marked-man --name wpa-cli docs/wpa_cli.md > wpa-cli.1",
     "lint": "eslint -c .eslintrc bin/ includes/ index.js",
     "lint:watch": "esw -f simple-detail -w -c ./.eslintrc bin/ includes/ index.js",
     "test": "mocha --reporter spec --ui bdd ./tests",
@@ -36,13 +38,15 @@
   "files": [
     "index.js",
     "bin",
-    "includes"
+    "includes",
+    "wpa-cli.1"
   ],
   "devDependencies": {
     "chai": "^3.5.0",
     "eslint": "^3.2.0",
     "eslint-watch": "^2.1.14",
     "executable": "^4.0.0",
+    "marked-man": "^0.1.5",
     "mocha": "^2.5.3"
   },
   "dependencies": {

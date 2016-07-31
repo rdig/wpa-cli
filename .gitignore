@@ -60,3 +60,6 @@ jspm_packages
 
 # Wordpress install test dir
 wordpress
+
+# Man file
+wpa-cli.1
