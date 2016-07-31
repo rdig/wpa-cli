@@ -39,7 +39,10 @@
     "index.js",
     "bin",
     "includes",
-    "wpa-cli.1"
+    "wpa-cli.1",
+    "license.md",
+    "contributing.md",
+    "readme.md"
   ],
   "devDependencies": {
     "chai": "^3.5.0",
