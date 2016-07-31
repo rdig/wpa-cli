@@ -1,5 +1,7 @@
 # Wordpress Admin CLI
 
+![logo](assets/wpa-cli-logo_v1.png)
+
 NPM command-line utility to administer Wordpress installations.
 
 The idea of it is to not fiddle with wordpres versions  / updates, just focus on writing your code. This should be easy to integrate in either a `npm script` or a runner `task` (`gulp`, `grunt`).
