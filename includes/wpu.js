@@ -7,6 +7,12 @@ var fs = require('fs-extra');
 var request = require('request');
 var tar = require('tar-fs')
 var gunzip = require('gunzip-maybe');
+var notify = {
+	log: require('cli').ok,
+	error: require('cli').error,
+	exit: require('cli').fatal,
+	debug: require('cli').debug
+};
 
 module.exports = {
 
@@ -25,14 +31,9 @@ module.exports = {
 	 *
 	 * @return {string} The locally installed Wordpress's version
 	 */
-	_checkLocalVersion: function(wordpressPath, exit, debug) {
+	_checkLocalVersion: function(wordpressPath) {
 
 		wordpressPath = wordpressPath || './';
-		exit = exit || function(msg) {
-			console.error(msg);
-			process.exit();
-		};
-		debug = debug || function() {};
 		var exitMessage = 'Cannot find version.php file. Ensure that you supplied a correct ' +
 			'wordpress installation path. Call with --help for more information.';
 		var versionFile = wordpressPath + 'wp-includes/version.php';
@@ -44,8 +45,8 @@ module.exports = {
 
 		} catch (error) {
 
-			debug(error);
-			exit(exitMessage);
+			notify.debug(error);
+			notify.exit(exitMessage);
 			return false;
 
 		}
@@ -67,7 +68,7 @@ module.exports = {
 	 *
 	 * @return {object} The request object
 	 */
-	_getLatestTarball: function(requestOptions, version, ok, err) {
+	_getLatestTarball: function(requestOptions, version) {
 
 		requestOptions = requestOptions || {
 			url: 'https://api.github.com/repos/#/tags',
@@ -76,19 +77,13 @@ module.exports = {
 			}
 		};
 		version = version || '0.0.0';
-		ok = ok || function(msg) {
-			console.log(msg);
-		};
-		err = err || function(msg) {
-			console.error(msg);
-		}
 
-		ok('Getting the latest version (' + version + ')');
+		notify.log('Getting the latest version (' + version + ')');
 
 		return request.get(requestOptions, function(error, response) {
 
 			if (error || response.statusCode !== 200) {
-				err('Could not fetch API data, check if Github is up!');
+				notify.error('Could not fetch API data, check if Github is up!');
 			}
 
 		});
@@ -105,14 +100,11 @@ module.exports = {
 	 *
 	 * @return {function} The extractor function
 	 */
-	_extractTarball: function(extractionPath, ok) {
+	_extractTarball: function(extractionPath) {
 
 		extractionPath = extractionPath || './';
-		ok = ok || function(msg) {
-			console.log(msg);
-		};
 
-		ok('Extracting files to ' + extractionPath);
+		notify.log('Extracting files to ' + extractionPath);
 
 		return tar.extract(extractionPath, {
 			/*
@@ -157,27 +149,13 @@ module.exports = {
 	 *
 	 * @return {boolean} This method does not return anything, since it's a caller.
 	 */
-	update: function(configObject, notify) {
+	update: function(configObject) {
 
 		configObject = configObject || {
 			name: 'app-name',
 			version: '0.0.0',
 			repo: '#',
 			path: './'
-		};
-
-		notify = notify || {
-			log: this.log || function(msg) {
-				console.log(msg);
-			},
-			error: this.error || function(msg) {
-				console.error(msg);
-			},
-			exit: this.exit || function(msg) {
-				console.error(msg);
-				process.exit();
-			},
-			debug: this.debug || function() {}
 		};
 
 		var options = {
@@ -188,7 +166,7 @@ module.exports = {
 		};
 
 		var wpu = this;
-		var currentVersion = wpu._checkLocalVersion(configObject.path, notify.exit, notify.debug);
+		var currentVersion = wpu._checkLocalVersion(configObject.path);
 
 		notify.log('Checking to see if an update is required (current version ' +
 			currentVersion + ')');
@@ -205,12 +183,12 @@ module.exports = {
 						'/tarball/' +
 						latestVersion;
 
-					wpu._getLatestTarball(options, latestVersion, notify.log, notify.error)
+					wpu._getLatestTarball(options, latestVersion)
 						.on('end', function() {
 							notify.log('Update complete. Happy coding!');
 						})
 						.pipe(gunzip())
-						.pipe(wpu._extractTarball(configObject.path, notify.log));
+						.pipe(wpu._extractTarball(configObject.path));
 
 				} else {
 

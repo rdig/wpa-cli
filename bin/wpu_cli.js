@@ -30,13 +30,6 @@ cli.main(function() {
 		path: wpu.formatPath(this.options.path)
 	};
 
-	var notifications = {
-		log: cli.ok,
-		error: cli.error,
-		exit: cli.fatal,
-		debug: cli.debug
-	}
-
-	wpu.update(config, notifications);
+	wpu.update(config);
 
 });
