@@ -7,6 +7,7 @@ var fs = require('fs-extra');
 var request = require('request');
 var tar = require('tar-fs')
 var gunzip = require('gunzip-maybe');
+var msgs = require('./messages.json');
 var notify = {
 	log: require('cli').ok,
 	error: require('cli').error,
@@ -34,8 +35,6 @@ module.exports = {
 	_checkLocalVersion: function(wordpressPath) {
 
 		wordpressPath = wordpressPath || './';
-		var exitMessage = 'Cannot find version.php file. Ensure that you supplied a correct ' +
-			'wordpress installation path. Call with --help for more information.';
 		var versionFile = wordpressPath + 'wp-includes/version.php';
 
 		try {
@@ -46,7 +45,7 @@ module.exports = {
 		} catch (error) {
 
 			notify.debug(error);
-			notify.exit(exitMessage);
+			notify.exit(msgs.versionNotFound);
 			return false;
 
 		}
@@ -78,12 +77,12 @@ module.exports = {
 		};
 		version = version || '0.0.0';
 
-		notify.log('Getting the latest version (' + version + ')');
+		notify.log(msgs.gettingLatest + ' (' + version + ')');
 
 		return request.get(requestOptions, function(error, response) {
 
 			if (error || response.statusCode !== 200) {
-				notify.error('Could not fetch API data, check if Github is up!');
+				notify.error(msgs.apiError);
 			}
 
 		});
@@ -104,7 +103,7 @@ module.exports = {
 
 		extractionPath = extractionPath || './';
 
-		notify.log('Extracting files to ' + extractionPath);
+		notify.log(msgs.extractingTo + ' ' + extractionPath);
 
 		return tar.extract(extractionPath, {
 			/*
@@ -168,8 +167,7 @@ module.exports = {
 		var wpu = this;
 		var currentVersion = wpu._checkLocalVersion(configObject.path);
 
-		notify.log('Checking to see if an update is required (current version ' +
-			currentVersion + ')');
+		notify.log(msgs.updateRequired + ' (current version ' +	currentVersion + ')');
 
 		request(options, function (error, response, body) {
 
@@ -185,20 +183,19 @@ module.exports = {
 
 					wpu._getLatestTarball(options, latestVersion)
 						.on('end', function() {
-							notify.log('Update complete. Happy coding!');
+							notify.log(msgs.updateComplete);
 						})
 						.pipe(gunzip())
 						.pipe(wpu._extractTarball(configObject.path));
 
 				} else {
 
-					notify.log('Your current Wordpress install is updated (latest version ' +
-					latestVersion +	'), nothing to do.');
+					notify.log(msgs.latestVersion + ' (version ' + latestVersion + ')');
 
 				}
 
 			} else {
-				notify.error('Could not fetch API data, check if Github is up!');
+				notify.error(msgs.apiError);
 			}
 
 		});

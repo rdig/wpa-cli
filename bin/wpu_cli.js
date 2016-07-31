@@ -3,6 +3,7 @@
 var cli = require('cli');
 var packageJson = require(__dirname + '/../package.json');
 var wpu = require('../includes/wpu.js');
+var msgs = require('../includes/messages.json');
 
 /*
  * Set the app name and version, otherwise it defaults to the ones from the `cli` package
@@ -18,7 +19,7 @@ cli.enable('version', 'status');
  * Describe the required options
  */
 cli.parse({
-	path: ['p', 'Path where your Wordpress install resides', 'path']
+	path: ['p', msgs.args.path, 'path']
 });
 
 cli.main(function() {
