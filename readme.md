@@ -36,7 +36,7 @@ Another usual use case is to create a `npm script` which will call it directly (
 
 This relies on the [Wordpress organization's Github](https://github.com/WordPress) [Wordpress project repository](https://github.com/WordPress/WordPress) for all it's actions.
 
-It takes it's versions from the published tags, and the files from the releases tarballs.
+It takes it's versions from the [published tags](https://api.github.com/repos/Wordpress/Wordpress/tags), and the files from the releases tarballs.
 
 This is kind of a risky move because if [Github](https://github.com) goes down this app will not be able to function anymore.
 
