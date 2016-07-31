@@ -1,11 +1,11 @@
 {
   "private": false,
-  "name": "wordpress-update-cli",
+  "name": "wpa-cli",
   "version": "0.0.1",
-  "description": "NPM command-line utility to update Wordpress installations",
+  "description": "NPM command-line utility to administer Wordpress installations",
   "main": "index.js",
   "bin": {
-    "wpu": "./bin/wpu_cli.js"
+    "wpa-cli": "./bin/wpa_cli.js"
   },
   "scripts": {
     "lint": "eslint -c .eslintrc bin/ includes/ index.js",
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rdig/wordpress-update-cli.git"
+    "url": "git+https://github.com/rdig/wpa-cli.git"
   },
   "keywords": [
     "wordpress",
@@ -30,9 +30,9 @@
   "contributors": [],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/rdig/wordpress-update-cli/issues"
+    "url": "https://github.com/rdig/wpa-cli/issues"
   },
-  "homepage": "https://github.com/rdig/wordpress-update-cli#readme",
+  "homepage": "https://github.com/rdig/wpa-cli",
   "files": [
     "index.js",
     "bin",

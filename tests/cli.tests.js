@@ -1,7 +1,7 @@
 var chai = require('chai');
 var executable = require('executable');
 var fs = require('fs');
-var cliFile = 'bin/wpu_cli.js';
+var cliFile = 'bin/wpa_cli.js';
 
 describe('cli' + '\n', function() {
 

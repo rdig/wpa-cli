@@ -1,5 +1,5 @@
 var chai = require('chai');
-var wpu = require('../includes/wpu.js');
+var wpa = require('../includes/wpa.js');
 
 describe('main' + '\n', function() {
 
@@ -7,7 +7,7 @@ describe('main' + '\n', function() {
 
 		it('Method should exist', function() {
 
-			chai.assert.equal(true, typeof wpu._checkLocalVersion === 'function');
+			chai.assert.equal(true, typeof wpa._checkLocalVersion === 'function');
 
 		});
 
@@ -17,7 +17,7 @@ describe('main' + '\n', function() {
 
 		it('Method should exist', function() {
 
-			chai.assert.equal(true, typeof wpu._getLatestTarball === 'function');
+			chai.assert.equal(true, typeof wpa._getLatestTarball === 'function');
 
 		});
 
@@ -27,7 +27,7 @@ describe('main' + '\n', function() {
 
 		it('Method should exist', function() {
 
-			chai.assert.equal(true, typeof wpu._extractTarball === 'function');
+			chai.assert.equal(true, typeof wpa._extractTarball === 'function');
 
 		});
 
@@ -37,7 +37,7 @@ describe('main' + '\n', function() {
 
 		it('Method should exist', function() {
 
-			chai.assert.equal(true, typeof wpu.formatPath === 'function');
+			chai.assert.equal(true, typeof wpa.formatPath === 'function');
 
 		});
 
@@ -47,7 +47,7 @@ describe('main' + '\n', function() {
 
 		it('Method should exist', function() {
 
-			chai.assert.equal(true, typeof wpu.update === 'function');
+			chai.assert.equal(true, typeof wpa.update === 'function');
 
 		});
 

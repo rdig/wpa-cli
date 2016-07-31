@@ -1,3 +1,3 @@
-# wordpress-update-cli
+# Wordpress Admin CLI
 
-NPM command-line utility to update Wordpress installations
+NPM command-line utility to administer Wordpress installations

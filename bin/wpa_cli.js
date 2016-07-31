@@ -2,7 +2,7 @@
 
 var cli = require('cli');
 var packageJson = require(__dirname + '/../package.json');
-var wpu = require('../includes/wpu.js');
+var wpa = require('../includes/wpa.js');
 var msgs = require('../includes/messages.json');
 
 var options = {
@@ -12,7 +12,7 @@ var options = {
 /*
  * Set the app name and version, otherwise it defaults to the ones from the `cli` package
  */
-cli.setApp('wpu', packageJson.version);
+cli.setApp('wpa-cli', packageJson.version);
 
 /*
  * Enable plugins
@@ -30,9 +30,9 @@ cli.main(function() {
 		name: packageJson.name,
 		version: packageJson.version,
 		repo: 'WordPress/WordPress',
-		path: wpu.formatPath(this.options.path)
+		path: wpa.formatPath(this.options.path)
 	};
 
-	wpu.update(config);
+	wpa.update(config);
 
 });

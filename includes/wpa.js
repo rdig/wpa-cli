@@ -159,8 +159,8 @@ module.exports = {
 			}
 		};
 
-		var wpu = this;
-		var currentVersion = wpu._checkLocalVersion(configObject.path);
+		var wpa = this;
+		var currentVersion = wpa._checkLocalVersion(configObject.path);
 
 		notify.log(msgs.updateRequired + ' (current version ' +	currentVersion + ')');
 
@@ -176,12 +176,12 @@ module.exports = {
 						'/tarball/' +
 						latestVersion;
 
-					wpu._getLatestTarball(options, latestVersion)
+					wpa._getLatestTarball(options, latestVersion)
 						.on('end', function() {
 							notify.log(msgs.updateComplete);
 						})
 						.pipe(gunzip())
-						.pipe(wpu._extractTarball(configObject.path));
+						.pipe(wpa._extractTarball(configObject.path));
 
 				} else {
 
