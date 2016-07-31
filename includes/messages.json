@@ -4,7 +4,7 @@
   },
   "versionNotFound": "Cannot find version.php file. Ensure that you supplied a correct wordpress installation path. Call with --help for more information.",
   "gettingLatest": "Getting the latest version",
-  "extractingTo": "Extracting files to",
+  "extractingTo": "Extracting files to folder",
   "updateRequired": "Checking to see if an update is required",
   "updateComplete": "Update complete. Happy coding!",
   "latestVersion": "Your current Wordpress install is updated to the latest version, nothing to do",
