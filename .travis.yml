@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+  - 4
+sudo: false
+cache:
+  timeout: 300
+  directories:
+  - node_modules
+script: npm run test
