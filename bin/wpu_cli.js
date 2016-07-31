@@ -28,4 +28,6 @@ cli.main(function() {
 		debug: cli.debug
 	}
 
+	wpu.update(config, notifications);
+
 });

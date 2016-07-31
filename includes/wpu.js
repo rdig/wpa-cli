@@ -143,6 +143,90 @@ module.exports = {
 			return path + '/';
 		}
 		return path;
+	},
+
+	/**
+	 * Orchestrator method that handles the update procedure with calls to various helper functions
+	 *
+	 * @method update
+	 *
+	 * @param {object} configObject Configuration object passed in when calling the function (most
+	 * values are taken from `package.json`)
+	 * @param {object} notify Object which contains the native notification fuctions of the
+	 * `cli` package
+	 *
+	 * @return {boolean} This method does not return anything, since it's a caller.
+	 */
+	update: function(configObject, notify) {
+
+		configObject = configObject || {
+			name: 'app-name',
+			version: '0.0.0',
+			repo: '#',
+			path: './'
+		};
+
+		notify = notify || {
+			log: this.log || function(msg) {
+				console.log(msg);
+			},
+			error: this.error || function(msg) {
+				console.error(msg);
+			},
+			exit: this.exit || function(msg) {
+				console.error(msg);
+				process.exit();
+			},
+			debug: this.debug || function() {}
+		};
+
+		var options = {
+			url: 'https://api.github.com/repos/' + configObject.repo + '/tags',
+			headers: {
+				'User-Agent': configObject.name + '/' + configObject.version
+			}
+		};
+
+		var wpu = this;
+		var currentVersion = wpu._checkLocalVersion(configObject.path, notify.exit, notify.debug);
+
+		notify.log('Checking to see if an update is required (current version ' +
+			currentVersion + ')');
+
+		request(options, function (error, response, body) {
+
+			if (!error && response.statusCode === 200) {
+
+				var latestVersion = JSON.parse(body)[0].name;
+				if (latestVersion !== currentVersion) {
+
+					options.url = 'https://api.github.com/repos/' +
+						configObject.repo +
+						'/tarball/' +
+						latestVersion;
+
+					wpu._getLatestTarball(options, latestVersion, notify.log, notify.error)
+						.on('end', function() {
+							notify.log('Update complete. Happy coding!');
+						})
+						.pipe(gunzip())
+						.pipe(wpu._extractTarball(configObject.path, notify.log));
+
+				} else {
+
+					notify.log('Your current Wordpress install is updated (latest version ' +
+					latestVersion +	'), nothing to do.');
+
+				}
+
+			} else {
+				notify.error('Could not fetch API data, check if Github is up!');
+			}
+
+		});
+
+		return false;
+
 	}
 
 };
