@@ -53,6 +53,81 @@ module.exports = {
 	},
 
 	/**
+	 * Fetch the latest .tar.gz archive from the Github repository. This function will be used
+	 * as a stream, so it will be .pipe() -ed
+	 *
+	 * @method _getLatestTarball
+	 *
+	 * @param {object} requestOptions Options to be passed to the ajax request (url/headers).
+	 * User-Agent headers are required since Github won't allow us to make an API call without them.
+	 * @param {string} version Latest version available in the repo (used for notification
+	 * purposes)
+	 * @param {function} ok Notification function to call in to inform the user
+	 * @param {function} err Notification function to call in case of error
+	 *
+	 * @return {object} The request object
+	 */
+	_getLatestTarball: function(requestOptions, version, ok, err) {
+
+		requestOptions = requestOptions || {
+			url: 'https://api.github.com/repos/#/tags',
+			headers: {
+				'User-Agent': 'app-name/0.0.0'
+			}
+		};
+		version = version || '0.0.0';
+		ok = ok || function(msg) {
+			console.log(msg);
+		};
+		err = err || function(msg) {
+			console.error(msg);
+		}
+
+		ok('Getting the latest version (' + version + ')');
+
+		return request.get(requestOptions, function(error, response) {
+
+			if (error || response.statusCode !== 200) {
+				err('Could not fetch API data, check if Github is up!');
+			}
+
+		});
+	},
+
+	/**
+	 * Extract all files / folders from a .tar.gz archive. This function will be used as a stream,
+	 * so it will be .pipe() -ed
+	 *
+	 * @method _extractTarball
+	 *
+	 * @param {string} extractionPath The path were the archive is to be extracted
+	 * @param {function} ok Notification function to call in to inform the user
+	 *
+	 * @return {function} The extractor function
+	 */
+	_extractTarball: function(extractionPath, ok) {
+
+		extractionPath = extractionPath || './';
+		ok = ok || function(msg) {
+			console.log(msg);
+		};
+
+		ok('Extracting files to ' + extractionPath);
+
+		return tar.extract(extractionPath, {
+			/*
+			 * We are re-writing the root folder of the archive to nothing (''), since we don't
+			 * need it.
+			 */
+			map: function(header) {
+				var originalDirName = header.name.split('/')[0];
+				header.name = header.name.replace(originalDirName, '');
+				return header;
+			}
+		});
+	},
+
+	/**
 	 * Add a trailing slash to the supplied path. If there is already one passed in, do nothing.
 	 *
 	 * @method formatPath
