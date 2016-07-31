@@ -5,6 +5,10 @@ var packageJson = require(__dirname + '/../package.json');
 var wpu = require('../includes/wpu.js');
 var msgs = require('../includes/messages.json');
 
+var options = {
+	path: ['p', msgs.args.path, 'path']
+};
+
 /*
  * Set the app name and version, otherwise it defaults to the ones from the `cli` package
  */
@@ -18,9 +22,7 @@ cli.enable('version', 'status');
 /*
  * Describe the required options
  */
-cli.parse({
-	path: ['p', msgs.args.path, 'path']
-});
+cli.parse(options);
 
 cli.main(function() {
 
