@@ -16,6 +16,8 @@ module.exports = {
 	 * @todo Find a reliable way to parse the `versions.php` file
 	 *
 	 * Check the version of the locally installed wordpress
+	 * The _ (underscore) before the name denotes that this function in meant to be for internal
+	 * use only and not called directly from the cli initializer (wpa_cli)
 	 *
 	 * @method checkLocalVersion
 	 *
@@ -47,6 +49,8 @@ module.exports = {
 	/**
 	 * Fetch the latest .tar.gz archive from the Github repository. This function will be used
 	 * as a stream, so it will be .pipe() -ed
+	 * The _ (underscore) before the name denotes that this function in meant to be for internal
+	 * use only and not called directly from the cli initializer (wpa_cli)
 	 *
 	 * @method _getLatestTarball
 	 *
@@ -81,6 +85,8 @@ module.exports = {
 	/**
 	 * Extract all files / folders from a .tar.gz archive. This function will be used as a stream,
 	 * so it will be .pipe() -ed
+	 * The _ (underscore) before the name denotes that this function in meant to be for internal
+	 * use only and not called directly from the cli initializer (wpa_cli)
 	 *
 	 * @method _extractTarball
 	 *
@@ -108,6 +114,45 @@ module.exports = {
 	},
 
 	/**
+	 * Orchestrator method that handles the download procedure with calls to various helper
+	 * functions
+	 * The _ (underscore) before the name denotes that this function in meant to be for internal
+	 * use only and not called directly from the cli initializer (wpa_cli)
+	 *
+	 * @method _download
+	 *
+	 * @param {object} configObject Configuration object passed in when calling the function (most
+	 * values are taken from `package.json`)
+	 *
+	 * @return {boolean} This method does not return anything, it will only perform operations on
+	 * the file system
+	 */
+	_download: function(configObject, version) {
+
+		configObject = configObject || {};
+		version = version || '0.0.0';
+
+		var config = Object.assign({
+			name: 'app-name',
+			version: '0.0.0',
+			repo: '#',
+			path: './'
+		}, configObject);
+
+		var options = {
+			url: 'https://api.github.com/repos/' + config.repo + '/tarball/' + version,
+			headers: {
+				'User-Agent': config.name + '/' + config.version
+			}
+		};
+
+		this._getLatestTarball(options, version)
+			.pipe(gunzip())
+			.pipe(this._extractTarball(configObject.path));
+
+	},
+
+	/**
 	 * Add a trailing slash to the supplied path. If there is already one passed in, do nothing.
 	 *
 	 * @method formatPath
@@ -125,34 +170,26 @@ module.exports = {
 		return path;
 	},
 
-	/**
-	 * Orchestrator method that handles the update procedure with calls to various helper functions
-	 *
-	 * @method update
-	 *
-	 * @param {object} configObject Configuration object passed in when calling the function (most
-	 * values are taken from `package.json`)
-	 *
-	 * @return {boolean} This method does not return anything, since it's a caller.
-	 */
 	update: function(configObject) {
 
-		configObject = configObject || {
+		configObject = configObject || {};
+
+		var config = Object.assign({
 			name: 'app-name',
 			version: '0.0.0',
 			repo: '#',
 			path: './'
-		};
+		}, configObject);
 
 		var options = {
-			url: 'https://api.github.com/repos/' + configObject.repo + '/tags',
+			url: 'https://api.github.com/repos/' + config.repo + '/tags',
 			headers: {
-				'User-Agent': configObject.name + '/' + configObject.version
+				'User-Agent': config.name + '/' + config.version
 			}
 		};
 
 		var wpa = this;
-		var currentVersion = wpa._checkLocalVersion(configObject.path);
+		var currentVersion = wpa._checkLocalVersion(config.path);
 
 		notify.log(msgs.updateRequired + ' (current version ' +	currentVersion + ')');
 
@@ -163,17 +200,7 @@ module.exports = {
 				var latestVersion = JSON.parse(body)[0].name;
 				if (latestVersion !== currentVersion) {
 
-					options.url = 'https://api.github.com/repos/' +
-						configObject.repo +
-						'/tarball/' +
-						latestVersion;
-
-					wpa._getLatestTarball(options, latestVersion)
-						.on('end', function() {
-							notify.log(msgs.updateComplete);
-						})
-						.pipe(gunzip())
-						.pipe(wpa._extractTarball(configObject.path));
+					wpa._download(config, latestVersion);
 
 				} else {
 
@@ -186,8 +213,6 @@ module.exports = {
 			}
 
 		});
-
-		return false;
 
 	}
 
