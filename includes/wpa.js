@@ -18,7 +18,7 @@ var defaultConfig = {
 	wp: {
 		repo: 'WordPress/WordPress',
 		path: './',
-		version: '0.0.0'
+		version: '1.5.0'
 	}
 };
 
@@ -45,8 +45,8 @@ module.exports = {
 
 		try {
 
-			fs.accessSync(versionFile, fs.F_OK);
-			return fs.readFileSync(versionFile, 'utf8').substr(94, 5);
+			var dirtyVersion = fs.readFileSync(versionFile, 'utf8').substr(94, 9);
+			return dirtyVersion.slice(0, dirtyVersion.indexOf('\''));
 
 		} catch (error) {
 
