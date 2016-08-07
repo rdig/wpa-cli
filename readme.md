@@ -4,9 +4,9 @@
 
 NPM command-line utility to administer Wordpress installations.
 
-The idea of it is to not fiddle with wordpres versions  / updates, just focus on writing your code. This should be easy to integrate in either a `npm script` or a runner `task` (`gulp`, `grunt`).
+The idea of it is to not fiddle with wordpres versions  / updates, and just focus on writing your code. This should be easy to integrate in either a `npm script` or a runner `task` (`gulp`, `grunt`).
 
-At the moment it only features an update function, which will get your installation to the latest stable version, but the plan is to also install, change versions, deploy your wordpress files with ease.
+At the moment it only features an instal and update function, which will get your installation to the latest stable version, but the plan is to also change versions, deploy your wordpress files with ease.
 
 Check the [roadmap](readme.md#roadmap--todo) for more information.
 
@@ -20,17 +20,22 @@ or globally:
 ```
 npm install --global wpa-cli
 ```
-Run it with the `--path` option to give it the location of your wordpress install.
+Run it with the `--path` option to give it the location of your current or desired wordpress install.
 
 *Example (assuming your installation is located in the wordpress subfolder):*
 ```
-wpa-cli --path wordpress/
+wpa-cli update --path wordpress/
 ```
+*Example (assuming you want to install a new version in `wordpress_new`):*
+```
+wpa-cli install --path wordpress_new/
+```
+
 
 Another usual use case is to create a `npm script` which will call it directly (`package.json`):
 ```
 "scripts": {
-  "update": "wpa-cli --path wordpress/"
+  "update": "wpa-cli update --path wordpress/"
 },
 ```
 
@@ -44,13 +49,7 @@ This is kind of a risky move because if [Github](https://github.com) goes down t
 
 ### Warning
 
-The way the update works, is to overwrite the default files with the new version (just like the Wordpress engine with `wp-update-core.php`), so if you made modifications the engine, if you run the update, **they will be overwritten**
-
-### Needs initial instalation
-
-Since it's only function at the moment is update, it still need an initial instalation of Wordpress. This will be changed in the future as more functionality is added.
-
-Check the [roadmap](readme.md#roadmap--todo) for more information.
+The way the install and update works, is to overwrite the default files with the new version (just like the Wordpress engine with `wp-update-core.php`), so if you made modifications the engine, if you run the update, **they will be overwritten**
 
 ## Known issues
 
@@ -60,7 +59,7 @@ If something doesn't work as you expect, look over the [known issues](https://gi
 
 wpa-cli has few options, but it's wise to know about them. By default no options are passed.
 
-The `-p` / `--path` option is required, if it's called without it, the app will exit with an error.
+The `-p` / `--path` option is required, *(If it's called without it, the app will exit with an error)*.
 
 - `-p`, `--path <PATH>` The path where your local Wordpress installation resides
 - `-k`, `--no-color` Omit color from output
@@ -68,22 +67,28 @@ The `-p` / `--path` option is required, if it's called without it, the app will 
 - `-v`, `--version` Display the current version
 - `-h`, `--help` Display help and usage details
 
+There are two commands that are available: *(If there isn't one specified the all will display the `--help` message)*
+- `install` Install a new wordpress instance. Takes the target folder from the `--path` option.
+- `update` Updates the local wordpress instace. You specify it's location via the `--path` option.
+
+**Example:** `wpa-cli install --path wordpress_new/` to install a new instance of wordpress into the `wordpress_new` folder.
+
 ## Name change
 
 You may have known this app as `wordpress-update-cli` but since the feature scope change it was renamed to reflect this.
 
 ## Roadmap / Todo
 
-- [ ] Install a new wordpress instance #1
-- [ ] Deploy a new database #2
-- [ ] Generate a `wp-config.php` file #3
-- [ ] Set file / folders permissions #4
-- [ ] Update external plugins #5
-- [ ] Git commit after update #6
-- [ ] Change current installation version #7
-- [ ] Change the current installed plugin(s) version(s) #8
-- [ ] Programatic API #9
-- [x] ~~Update the local wordpress install to the latest version #10~~
+- [x] ~~Install a new wordpress instance~~
+- [ ] Deploy a new database
+- [ ] Generate a `wp-config.php` file
+- [ ] Set file / folders permissions
+- [ ] Update external plugins
+- [ ] Git commit after update
+- [ ] Change current installation version
+- [ ] Change the current installed plugin(s) version(s)
+- [ ] Programatic API
+- [x] ~~Update the local wordpress install to the latest version~~
 
 ## Contributing
 
