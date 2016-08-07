@@ -61,6 +61,41 @@ module.exports = {
 	},
 
 	/**
+	 * Get the latest published stable wordpress version (tag name) from the repository
+	 *
+	 * @method _getLatestVersion
+	 *
+	 * @param  {function} callback Callback function to call on success. It passed it the latest
+	 * version string.
+	 *
+	 * @return {null} This method does not return anything, it calls a callback on success.
+	 */
+	_getLatestVersion: function(callback) {
+
+		var config = Object.assign({},defaultConfig);
+
+		var requestSettings = {
+			url: 'https://api.github.com/repos/' + config.wp.repo + '/tags',
+			headers: {
+				'User-Agent': config.app.name + '/' + config.app.version
+			}
+		};
+
+		request(requestSettings, function (error, response, body) {
+
+			if (!error && response.statusCode === 200) {
+
+				callback(JSON.parse(body)[0].name);
+
+			} else {
+				notify.error(msgs.apiError);
+			}
+
+		});
+
+	},
+
+	/**
 	 * Fetch the latest .tar.gz archive from the Github repository. This function will be used
 	 * as a stream, so it will be .pipe() -ed
 	 * The _ (underscore) before the name denotes that this function in meant to be for internal
@@ -204,37 +239,22 @@ module.exports = {
 		var config = Object.assign({},defaultConfig);
 		config.wp.path = path;
 
-		var requestSettings = {
-			url: 'https://api.github.com/repos/' + config.wp.repo + '/tags',
-			headers: {
-				'User-Agent': config.app.name + '/' + config.app.version
-			}
-		};
-
 		var wpa = this;
 		var currentVersion = wpa._checkLocalVersion(config.wp.path);
 
 		notify.log(msgs.updateRequired + ' (current version ' +	currentVersion + ')');
 
-		request(requestSettings, function (error, response, body) {
+		wpa._getLatestVersion(function(latestVersion) {
 
-			if (!error && response.statusCode === 200) {
+			if (latestVersion !== currentVersion) {
 
-				var latestVersion = JSON.parse(body)[0].name;
-
-				if (latestVersion !== currentVersion) {
-
-					config.wp.version = latestVersion;
-					wpa._download(config, msgs.updateComplete);
-
-				} else {
-
-					notify.log(msgs.latestVersion + ' (version ' + latestVersion + ')');
-
-				}
+				config.wp.version = latestVersion;
+				wpa._download(config, msgs.updateComplete);
 
 			} else {
-				notify.error(msgs.apiError);
+
+				notify.log(msgs.latestVersion + ' (version ' + latestVersion + ')');
+
 			}
 
 		});
@@ -259,29 +279,12 @@ module.exports = {
 		var config = Object.assign({},defaultConfig);
 		config.wp.path = path;
 
-		var requestSettings = {
-			url: 'https://api.github.com/repos/' + config.wp.repo + '/tags',
-			headers: {
-				'User-Agent': config.app.name + '/' + config.app.version
-			}
-		};
-
 		var wpa = this;
 
-		request(requestSettings, function (error, response, body) {
+		wpa._getLatestVersion(function(latestVersion) {
 
-			if (!error && response.statusCode === 200) {
-
-				var latestVersion = JSON.parse(body)[0].name;
-
-				config.wp.version = latestVersion;
-				wpa._download(config, msgs.installComplete);
-
-			} else {
-
-				notify.error(msgs.apiError);
-
-			}
+			config.wp.version = latestVersion;
+			wpa._download(config, msgs.installComplete);
 
 		});
 

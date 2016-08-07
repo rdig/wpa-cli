@@ -13,6 +13,16 @@ describe('main' + '\n', function() {
 
 	});
 
+	describe('_getLatestVersion', function() {
+
+		it('Method should exist', function() {
+
+			chai.assert.equal(true, typeof wpa._getLatestVersion === 'function');
+
+		});
+
+	});
+
 	describe('_getTarball', function() {
 
 		it('Method should exist', function() {
