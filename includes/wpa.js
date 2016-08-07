@@ -2,12 +2,26 @@ var fs = require('fs');
 var request = require('request');
 var tar = require('tar-fs')
 var gunzip = require('gunzip-maybe');
+var packageJson = require('../package.json');
 var msgs = require('./messages.json');
+
 var notify = {
 	log: require('cli').ok,
 	error: require('cli').error,
 	exit: require('cli').fatal,
 	debug: require('cli').debug
+};
+
+var defaultConfig = {
+	app: {
+		name: packageJson.name,
+		version: packageJson.version
+	},
+	wp: {
+		repo: 'WordPress/WordPress',
+		path: './',
+		version: '1.5.0'
+	}
 };
 
 module.exports = {
@@ -16,14 +30,13 @@ module.exports = {
 	 * @todo Find a reliable way to parse the `versions.php` file
 	 *
 	 * Check the version of the locally installed wordpress
+	 * The _ (underscore) before the name denotes that this function in meant to be for internal
+	 * use only and not called directly from the cli initializer (wpa_cli)
 	 *
 	 * @method checkLocalVersion
 	 *
 	 * @param {string} wordpressPath Path to location of the wordpress installation, relative to the
 	 * base folder. Defaults to './'.
-	 * @param {function} exit Notification function to call in case of fatal error
-	 * @param {function} debug Notification function to call in case the script was
-	 * invoked using `-- debug`
 	 *
 	 * @return {string} The locally installed Wordpress's version
 	 */
@@ -34,8 +47,8 @@ module.exports = {
 
 		try {
 
-			fs.accessSync(versionFile, fs.F_OK);
-			return fs.readFileSync(versionFile, 'utf8').substr(94, 5);
+			var dirtyVersion = fs.readFileSync(versionFile, 'utf8').substr(94, 9);
+			return dirtyVersion.slice(0, dirtyVersion.indexOf('\''));
 
 		} catch (error) {
 
@@ -48,21 +61,58 @@ module.exports = {
 	},
 
 	/**
+	 * Get the latest published stable wordpress version (tag name) from the repository
+	 *
+	 * @method _getLatestVersion
+	 *
+	 * @param  {function} callback Callback function to call on success. It passed it the latest
+	 * version string.
+	 *
+	 * @return {null} This method does not return anything, it calls a callback on success.
+	 */
+	_getLatestVersion: function(callback) {
+
+		var config = Object.assign({},defaultConfig);
+
+		var requestSettings = {
+			url: 'https://api.github.com/repos/' + config.wp.repo + '/tags',
+			headers: {
+				'User-Agent': config.app.name + '/' + config.app.version
+			}
+		};
+
+		request(requestSettings, function (error, response, body) {
+
+			if (!error && response.statusCode === 200) {
+
+				callback(JSON.parse(body)[0].name);
+
+			} else {
+				notify.error(msgs.apiError);
+			}
+
+		});
+
+	},
+
+	/**
 	 * Fetch the latest .tar.gz archive from the Github repository. This function will be used
 	 * as a stream, so it will be .pipe() -ed
+	 * The _ (underscore) before the name denotes that this function in meant to be for internal
+	 * use only and not called directly from the cli initializer (wpa_cli)
 	 *
-	 * @method _getLatestTarball
+	 * @method _getTarball
 	 *
 	 * @param {object} requestOptions Options to be passed to the ajax request (url/headers).
 	 * User-Agent headers are required since Github won't allow us to make an API call without them.
+	 * The version (tag name) of wordpress to download is embedded into the url.
 	 * @param {string} version Latest version available in the repo (used for notification
-	 * purposes)
-	 * @param {function} ok Notification function to call in to inform the user
-	 * @param {function} err Notification function to call in case of error
+	 * purposes). Do not cofuse this with the version to download, that is passed in via
+	 * `requestOptions.url`
 	 *
 	 * @return {object} The request object
 	 */
-	_getLatestTarball: function(requestOptions, version) {
+	_getTarball: function(requestOptions, version) {
 
 		requestOptions = requestOptions || {
 			url: 'https://api.github.com/repos/#/tags',
@@ -86,11 +136,12 @@ module.exports = {
 	/**
 	 * Extract all files / folders from a .tar.gz archive. This function will be used as a stream,
 	 * so it will be .pipe() -ed
+	 * The _ (underscore) before the name denotes that this function in meant to be for internal
+	 * use only and not called directly from the cli initializer (wpa_cli)
 	 *
 	 * @method _extractTarball
 	 *
 	 * @param {string} extractionPath The path were the archive is to be extracted
-	 * @param {function} ok Notification function to call in to inform the user
 	 *
 	 * @return {function} The extractor function
 	 */
@@ -114,6 +165,45 @@ module.exports = {
 	},
 
 	/**
+	 * Orchestrator method that handles the download procedure with calls to various helper
+	 * functions
+	 * The _ (underscore) before the name denotes that this function in meant to be for internal
+	 * use only and not called directly from the cli initializer (wpa_cli)
+	 *
+	 * @method _download
+	 *
+	 * @param {object} configObject Configuration object passed in when calling the function.
+	 * It is derived from the `defaultConfig` object + arguments pass in to the cli.
+	 * @param {string} successMessage Message that gets outputed when the download / extract
+	 * stream succeeds.
+	 *
+	 * @return {null} This method does not return anything, it will only perform operations on
+	 * the file system
+	 */
+	_download: function(configObject, successMessage) {
+
+		configObject = configObject || {};
+		successMessage = successMessage || 'Done downloading';
+
+		var config = Object.assign(defaultConfig, configObject);
+
+		var requestSettings = {
+			url: 'https://api.github.com/repos/' + config.wp.repo + '/tarball/' + config.wp.version,
+			headers: {
+				'User-Agent': config.app.name + '/' + config.app.version
+			}
+		};
+
+		this._getTarball(requestSettings, config.wp.version)
+			.on('end', function() {
+				notify.log(successMessage);
+			})
+			.pipe(gunzip())
+			.pipe(this._extractTarball(config.wp.path));
+
+	},
+
+	/**
 	 * Add a trailing slash to the supplied path. If there is already one passed in, do nothing.
 	 *
 	 * @method formatPath
@@ -132,70 +222,71 @@ module.exports = {
 	},
 
 	/**
-	 * Orchestrator method that handles the update procedure with calls to various helper functions
+	 * Update the local version of wordpress. It will compare the local-found version with the
+	 * latest one found in the repository (tag name) and call the _download() method based on that.
 	 *
 	 * @method update
 	 *
-	 * @param {object} configObject Configuration object passed in when calling the function (most
-	 * values are taken from `package.json`)
-	 * @param {object} notify Object which contains the native notification fuctions of the
-	 * `cli` package
+	 * @param  {string} path Path passed in via the `--path` call argument. Represents the local
+	 * wordpress install path.
 	 *
-	 * @return {boolean} This method does not return anything, since it's a caller.
+	 * @return {null} This method does not return anything, as it is only a caller
 	 */
-	update: function(configObject) {
+	update: function(path) {
 
-		configObject = configObject || {
-			name: 'app-name',
-			version: '0.0.0',
-			repo: '#',
-			path: './'
-		};
+		path = path || './';
 
-		var options = {
-			url: 'https://api.github.com/repos/' + configObject.repo + '/tags',
-			headers: {
-				'User-Agent': configObject.name + '/' + configObject.version
-			}
-		};
+		var config = Object.assign({},defaultConfig);
+		config.wp.path = path;
 
 		var wpa = this;
-		var currentVersion = wpa._checkLocalVersion(configObject.path);
+		var currentVersion = wpa._checkLocalVersion(config.wp.path);
 
 		notify.log(msgs.updateRequired + ' (current version ' +	currentVersion + ')');
 
-		request(options, function (error, response, body) {
+		wpa._getLatestVersion(function(latestVersion) {
 
-			if (!error && response.statusCode === 200) {
+			if (latestVersion !== currentVersion) {
 
-				var latestVersion = JSON.parse(body)[0].name;
-				if (latestVersion !== currentVersion) {
-
-					options.url = 'https://api.github.com/repos/' +
-						configObject.repo +
-						'/tarball/' +
-						latestVersion;
-
-					wpa._getLatestTarball(options, latestVersion)
-						.on('end', function() {
-							notify.log(msgs.updateComplete);
-						})
-						.pipe(gunzip())
-						.pipe(wpa._extractTarball(configObject.path));
-
-				} else {
-
-					notify.log(msgs.latestVersion + ' (version ' + latestVersion + ')');
-
-				}
+				config.wp.version = latestVersion;
+				wpa._download(config, msgs.updateComplete);
 
 			} else {
-				notify.error(msgs.apiError);
+
+				notify.log(msgs.latestVersion + ' (version ' + latestVersion + ')');
+
 			}
 
 		});
 
-		return false;
+	},
+
+	/**
+	 * Install the latest version of wordpress to the specified path
+	 *
+	 * @method install
+	 *
+	 * @param  {string} path Path passed in via the `--path` call argument. Represents the path
+	 * where the new wordpress should be installed. If the folder / files exist, they will be
+	 * overwritten.
+	 *
+	 * @return {null} This method does not return anything, as it is only a caller.
+	 */
+	install: function(path) {
+
+		path = path || './';
+
+		var config = Object.assign({},defaultConfig);
+		config.wp.path = path;
+
+		var wpa = this;
+
+		wpa._getLatestVersion(function(latestVersion) {
+
+			config.wp.version = latestVersion;
+			wpa._download(config, msgs.installComplete);
+
+		});
 
 	}
 

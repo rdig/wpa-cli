@@ -13,11 +13,21 @@ describe('main' + '\n', function() {
 
 	});
 
-	describe('_getLatestTarball', function() {
+	describe('_getLatestVersion', function() {
 
 		it('Method should exist', function() {
 
-			chai.assert.equal(true, typeof wpa._getLatestTarball === 'function');
+			chai.assert.equal(true, typeof wpa._getLatestVersion === 'function');
+
+		});
+
+	});
+
+	describe('_getTarball', function() {
+
+		it('Method should exist', function() {
+
+			chai.assert.equal(true, typeof wpa._getTarball === 'function');
 
 		});
 
@@ -28,6 +38,16 @@ describe('main' + '\n', function() {
 		it('Method should exist', function() {
 
 			chai.assert.equal(true, typeof wpa._extractTarball === 'function');
+
+		});
+
+	});
+
+	describe('_download', function() {
+
+		it('Method should exist', function() {
+
+			chai.assert.equal(true, typeof wpa._download === 'function');
 
 		});
 
@@ -48,6 +68,16 @@ describe('main' + '\n', function() {
 		it('Method should exist', function() {
 
 			chai.assert.equal(true, typeof wpa.update === 'function');
+
+		});
+
+	});
+
+	describe('install', function() {
+
+		it('Method should exist', function() {
+
+			chai.assert.equal(true, typeof wpa.install === 'function');
 
 		});
 

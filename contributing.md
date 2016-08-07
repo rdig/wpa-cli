@@ -41,7 +41,6 @@ This is a quick outline of the code contributing process:
 5. Write the tests *(in all honesty this should come before writing the code)*
 6. Test your code
 7. Submit a pull request to this repo
-8. Codes gets merged
 
 ### Getting started
 
