@@ -33,6 +33,16 @@ describe('main' + '\n', function() {
 
 	});
 
+	describe('_download', function() {
+
+		it('Method should exist', function() {
+
+			chai.assert.equal(true, typeof wpa._download === 'function');
+
+		});
+
+	});
+
 	describe('formatPath', function() {
 
 		it('Method should exist', function() {
