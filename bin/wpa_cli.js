@@ -30,6 +30,11 @@ cli.parse(options, commands);
 
 cli.main(function() {
 
+	if (!this.options.path) {
+		cli.fatal(msgs.argsError.noPath);
+		return;
+	}
+
 	var config = {
 		name: packageJson.name,
 		version: packageJson.version,

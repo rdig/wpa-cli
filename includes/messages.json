@@ -2,6 +2,9 @@
   "args": {
     "path": "The path where your Wordpress installation resides"
   },
+  "argsError": {
+    "noPath": "You didn't specify a --path argument. Call with --help for more information."
+  },
   "versionNotFound": "Cannot find version.php file. Ensure that you supplied a correct wordpress installation path. Call with --help for more information.",
   "gettingLatest": "Getting the latest version",
   "extractingTo": "Extracting files to folder",
