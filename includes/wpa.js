@@ -2,12 +2,24 @@ var fs = require('fs');
 var request = require('request');
 var tar = require('tar-fs')
 var gunzip = require('gunzip-maybe');
+var packageJson = require('../package.json');
 var msgs = require('./messages.json');
 var notify = {
 	log: require('cli').ok,
 	error: require('cli').error,
 	exit: require('cli').fatal,
 	debug: require('cli').debug
+};
+var defaultConfig = {
+	app: {
+		name: packageJson.name,
+		version: packageJson.version
+	},
+	wp: {
+		repo: 'WordPress/WordPress',
+		path: './',
+		version: '0.0.0'
+	}
 };
 
 module.exports = {
@@ -123,8 +135,7 @@ module.exports = {
 	 *
 	 * @method _download
 	 *
-	 * @param {object} configObject Configuration object passed in when calling the function (most
-	 * values are taken from `package.json`)
+	 * @param {object} configObject Configuration object passed in when calling the function
 	 * @param {string} version The version (tag name) of wordpress to download
 	 *
 	 * @return {null} This method does not return anything, it will only perform operations on
@@ -135,23 +146,18 @@ module.exports = {
 		configObject = configObject || {};
 		version = version || '0.0.0';
 
-		var config = Object.assign({
-			appName: 'app-name',
-			appVersion: '0.0.0',
-			repo: '#',
-			path: './'
-		}, configObject);
+		var config = Object.assign(defaultConfig, configObject);
 
-		var options = {
-			url: 'https://api.github.com/repos/' + config.repo + '/tarball/' + version,
+		var requestSettings = {
+			url: 'https://api.github.com/repos/' + config.wp.repo + '/tarball/' + version,
 			headers: {
-				'User-Agent': config.appName + '/' + config.appVersion
+				'User-Agent': config.app.name + '/' + config.app.version
 			}
 		};
 
-		this._getTarball(options, version)
+		this._getTarball(requestSettings, version)
 			.pipe(gunzip())
-			.pipe(this._extractTarball(configObject.path));
+			.pipe(this._extractTarball(config.wp.path));
 
 	},
 
@@ -179,35 +185,35 @@ module.exports = {
 	 *
 	 * @method update
 	 *
-	 * @param  {object} configObject Configuration object passed in when calling the function (most
-	 * values are taken from `package.json`)
+	 * @param  {string} path Path passed in via the `--path` call argument. Represents the local
+	 * wordpress install path.
 	 *
 	 * @return {null} This method does not return anything, as it is only a caller
 	 */
-	update: function(configObject) {
+	update: function(path) {
 
-		configObject = configObject || {};
+		path = path || './';
 
-		var config = Object.assign({
-			appName: 'app-name',
-			appVersion: '0.0.0',
-			repo: '#',
-			path: './'
-		}, configObject);
+		var config = Object.assign(
+			{},
+			defaultConfig
+		);
 
-		var options = {
-			url: 'https://api.github.com/repos/' + config.repo + '/tags',
+		config.wp.path = path;
+
+		var requestSettings = {
+			url: 'https://api.github.com/repos/' + config.wp.repo + '/tags',
 			headers: {
-				'User-Agent': config.appName + '/' + config.appVersion
+				'User-Agent': config.app.name + '/' + config.app.version
 			}
 		};
 
 		var wpa = this;
-		var currentVersion = wpa._checkLocalVersion(config.path);
+		var currentVersion = wpa._checkLocalVersion(config.wp.path);
 
 		notify.log(msgs.updateRequired + ' (current version ' +	currentVersion + ')');
 
-		request(options, function (error, response, body) {
+		request(requestSettings, function (error, response, body) {
 
 			if (!error && response.statusCode === 200) {
 

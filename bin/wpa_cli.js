@@ -35,12 +35,7 @@ cli.main(function() {
 		return;
 	}
 
-	var config = {
-		name: packageJson.name,
-		version: packageJson.version,
-		repo: 'WordPress/WordPress',
-		path: wpa.formatPath(this.options.path)
-	};
+	var path = wpa.formatPath(this.options.path);
 
 	switch (this.command) {
 
@@ -48,7 +43,7 @@ cli.main(function() {
 		break;
 
 	case 'update':
-		wpa.update(config);
+		wpa.update(path);
 		break;
 
 	default:
