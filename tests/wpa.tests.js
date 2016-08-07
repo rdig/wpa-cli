@@ -13,11 +13,11 @@ describe('main' + '\n', function() {
 
 	});
 
-	describe('_getLatestTarball', function() {
+	describe('_getTarball', function() {
 
 		it('Method should exist', function() {
 
-			chai.assert.equal(true, typeof wpa._getLatestTarball === 'function');
+			chai.assert.equal(true, typeof wpa._getTarball === 'function');
 
 		});
 

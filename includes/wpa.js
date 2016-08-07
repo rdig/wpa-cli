@@ -52,7 +52,7 @@ module.exports = {
 	 * The _ (underscore) before the name denotes that this function in meant to be for internal
 	 * use only and not called directly from the cli initializer (wpa_cli)
 	 *
-	 * @method _getLatestTarball
+	 * @method _getTarball
 	 *
 	 * @param {object} requestOptions Options to be passed to the ajax request (url/headers).
 	 * User-Agent headers are required since Github won't allow us to make an API call without them.
@@ -63,7 +63,7 @@ module.exports = {
 	 *
 	 * @return {object} The request object
 	 */
-	_getLatestTarball: function(requestOptions, version) {
+	_getTarball: function(requestOptions, version) {
 
 		requestOptions = requestOptions || {
 			url: 'https://api.github.com/repos/#/tags',
@@ -149,7 +149,7 @@ module.exports = {
 			}
 		};
 
-		this._getLatestTarball(options, version)
+		this._getTarball(options, version)
 			.pipe(gunzip())
 			.pipe(this._extractTarball(configObject.path));
 
