@@ -137,13 +137,16 @@ module.exports = {
 	 *
 	 * @param {object} configObject Configuration object passed in when calling the function.
 	 * It is derived from the `defaultConfig` object + arguments pass in to the cli.
+	 * @param {string} successMessage Message that gets outputed when the download / extract
+	 * stream succeeds.
 	 *
 	 * @return {null} This method does not return anything, it will only perform operations on
 	 * the file system
 	 */
-	_download: function(configObject) {
+	_download: function(configObject, successMessage) {
 
 		configObject = configObject || {};
+		successMessage = successMessage || 'Done downloading';
 
 		var config = Object.assign(defaultConfig, configObject);
 
@@ -155,6 +158,9 @@ module.exports = {
 		};
 
 		this._getTarball(requestSettings, config.wp.version)
+			.on('end', function() {
+				notify.log(successMessage);
+			})
 			.pipe(gunzip())
 			.pipe(this._extractTarball(config.wp.path));
 
@@ -217,7 +223,7 @@ module.exports = {
 				if (latestVersion !== currentVersion) {
 
 					config.wp.version = latestVersion;
-					wpa._download(config);
+					wpa._download(config, msgs.updateComplete);
 
 				} else {
 
