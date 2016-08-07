@@ -21,9 +21,6 @@ module.exports = {
 	 *
 	 * @param {string} wordpressPath Path to location of the wordpress installation, relative to the
 	 * base folder. Defaults to './'.
-	 * @param {function} exit Notification function to call in case of fatal error
-	 * @param {function} debug Notification function to call in case the script was
-	 * invoked using `-- debug`
 	 *
 	 * @return {string} The locally installed Wordpress's version
 	 */
@@ -57,8 +54,6 @@ module.exports = {
 	 * User-Agent headers are required since Github won't allow us to make an API call without them.
 	 * @param {string} version Latest version available in the repo (used for notification
 	 * purposes)
-	 * @param {function} ok Notification function to call in to inform the user
-	 * @param {function} err Notification function to call in case of error
 	 *
 	 * @return {object} The request object
 	 */
@@ -90,7 +85,6 @@ module.exports = {
 	 * @method _extractTarball
 	 *
 	 * @param {string} extractionPath The path were the archive is to be extracted
-	 * @param {function} ok Notification function to call in to inform the user
 	 *
 	 * @return {function} The extractor function
 	 */
@@ -138,8 +132,6 @@ module.exports = {
 	 *
 	 * @param {object} configObject Configuration object passed in when calling the function (most
 	 * values are taken from `package.json`)
-	 * @param {object} notify Object which contains the native notification fuctions of the
-	 * `cli` package
 	 *
 	 * @return {boolean} This method does not return anything, since it's a caller.
 	 */
