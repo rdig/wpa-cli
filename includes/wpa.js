@@ -56,8 +56,10 @@ module.exports = {
 	 *
 	 * @param {object} requestOptions Options to be passed to the ajax request (url/headers).
 	 * User-Agent headers are required since Github won't allow us to make an API call without them.
+	 * The version (tag name) of wordpress to download is embedded into the url.
 	 * @param {string} version Latest version available in the repo (used for notification
-	 * purposes)
+	 * purposes). Do not cofuse this with the version to download, that is passed in via
+	 * `requestOptions.url`
 	 *
 	 * @return {object} The request object
 	 */
@@ -125,7 +127,7 @@ module.exports = {
 	 * values are taken from `package.json`)
 	 * @param {string} version The version (tag name) of wordpress to download
 	 *
-	 * @return {boolean} This method does not return anything, it will only perform operations on
+	 * @return {null} This method does not return anything, it will only perform operations on
 	 * the file system
 	 */
 	_download: function(configObject, version) {
@@ -171,6 +173,17 @@ module.exports = {
 		return path;
 	},
 
+	/**
+	 * Update the local version of wordpress. It will compare the local-found version with the
+	 * latest one found in the repository (tag name) and call the _download() method based on that.
+	 *
+	 * @method update
+	 *
+	 * @param  {object} configObject Configuration object passed in when calling the function (most
+	 * values are taken from `package.json`)
+	 *
+	 * @return {null} This method does not return anything, as it is only a caller
+	 */
 	update: function(configObject) {
 
 		configObject = configObject || {};
