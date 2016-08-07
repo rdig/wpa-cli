@@ -40,6 +40,7 @@ cli.main(function() {
 	switch (this.command) {
 
 	case 'install':
+		wpa.install(path);
 		break;
 
 	case 'update':

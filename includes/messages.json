@@ -10,6 +10,7 @@
   "extractingTo": "Extracting files to folder",
   "updateRequired": "Checking to see if an update is required",
   "updateComplete": "Update complete. Happy coding!",
+  "installComplete": "Installation complete. Happy coding!",
   "latestVersion": "Your current Wordpress install is updated to the latest version, nothing to do",
   "apiError": "Could not fetch API data, check if Github is up!",
   "noApi": "does not have an programatic interface yet. It's just used via the CLI. If you want to help build this, we would gladly welcome a PR."

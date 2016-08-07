@@ -4,12 +4,14 @@ var tar = require('tar-fs')
 var gunzip = require('gunzip-maybe');
 var packageJson = require('../package.json');
 var msgs = require('./messages.json');
+
 var notify = {
 	log: require('cli').ok,
 	error: require('cli').error,
 	exit: require('cli').fatal,
 	debug: require('cli').debug
 };
+
 var defaultConfig = {
 	app: {
 		name: packageJson.name,
@@ -233,6 +235,52 @@ module.exports = {
 
 			} else {
 				notify.error(msgs.apiError);
+			}
+
+		});
+
+	},
+
+	/**
+	 * Install the latest version of wordpress to the specified path
+	 *
+	 * @method install
+	 *
+	 * @param  {string} path Path passed in via the `--path` call argument. Represents the path
+	 * where the new wordpress should be installed. If the folder / files exist, they will be
+	 * overwritten.
+	 *
+	 * @return {null} This method does not return anything, as it is only a caller.
+	 */
+	install: function(path) {
+
+		path = path || './';
+
+		var config = Object.assign({},defaultConfig);
+		config.wp.path = path;
+
+		var requestSettings = {
+			url: 'https://api.github.com/repos/' + config.wp.repo + '/tags',
+			headers: {
+				'User-Agent': config.app.name + '/' + config.app.version
+			}
+		};
+
+		var wpa = this;
+
+		request(requestSettings, function (error, response, body) {
+
+			if (!error && response.statusCode === 200) {
+
+				var latestVersion = JSON.parse(body)[0].name;
+
+				config.wp.version = latestVersion;
+				wpa._download(config, msgs.installComplete);
+
+			} else {
+
+				notify.error(msgs.apiError);
+
 			}
 
 		});

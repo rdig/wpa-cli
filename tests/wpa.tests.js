@@ -63,4 +63,14 @@ describe('main' + '\n', function() {
 
 	});
 
+	describe('install', function() {
+
+		it('Method should exist', function() {
+
+			chai.assert.equal(true, typeof wpa.install === 'function');
+
+		});
+
+	});
+
 });
