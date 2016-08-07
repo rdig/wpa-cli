@@ -133,8 +133,8 @@ module.exports = {
 		version = version || '0.0.0';
 
 		var config = Object.assign({
-			name: 'app-name',
-			version: '0.0.0',
+			appName: 'app-name',
+			appVersion: '0.0.0',
 			repo: '#',
 			path: './'
 		}, configObject);
@@ -142,7 +142,7 @@ module.exports = {
 		var options = {
 			url: 'https://api.github.com/repos/' + config.repo + '/tarball/' + version,
 			headers: {
-				'User-Agent': config.name + '/' + config.version
+				'User-Agent': config.appName + '/' + config.appVersion
 			}
 		};
 
@@ -175,8 +175,8 @@ module.exports = {
 		configObject = configObject || {};
 
 		var config = Object.assign({
-			name: 'app-name',
-			version: '0.0.0',
+			appName: 'app-name',
+			appVersion: '0.0.0',
 			repo: '#',
 			path: './'
 		}, configObject);
@@ -184,7 +184,7 @@ module.exports = {
 		var options = {
 			url: 'https://api.github.com/repos/' + config.repo + '/tags',
 			headers: {
-				'User-Agent': config.name + '/' + config.version
+				'User-Agent': config.appName + '/' + config.appVersion
 			}
 		};
 
