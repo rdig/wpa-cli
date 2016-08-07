@@ -123,6 +123,7 @@ module.exports = {
 	 *
 	 * @param {object} configObject Configuration object passed in when calling the function (most
 	 * values are taken from `package.json`)
+	 * @param {string} version The version (tag name) of wordpress to download
 	 *
 	 * @return {boolean} This method does not return anything, it will only perform operations on
 	 * the file system
