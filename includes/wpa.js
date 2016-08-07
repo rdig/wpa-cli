@@ -135,27 +135,26 @@ module.exports = {
 	 *
 	 * @method _download
 	 *
-	 * @param {object} configObject Configuration object passed in when calling the function
-	 * @param {string} version The version (tag name) of wordpress to download
+	 * @param {object} configObject Configuration object passed in when calling the function.
+	 * It is derived from the `defaultConfig` object + arguments pass in to the cli.
 	 *
 	 * @return {null} This method does not return anything, it will only perform operations on
 	 * the file system
 	 */
-	_download: function(configObject, version) {
+	_download: function(configObject) {
 
 		configObject = configObject || {};
-		version = version || '0.0.0';
 
 		var config = Object.assign(defaultConfig, configObject);
 
 		var requestSettings = {
-			url: 'https://api.github.com/repos/' + config.wp.repo + '/tarball/' + version,
+			url: 'https://api.github.com/repos/' + config.wp.repo + '/tarball/' + config.wp.version,
 			headers: {
 				'User-Agent': config.app.name + '/' + config.app.version
 			}
 		};
 
-		this._getTarball(requestSettings, version)
+		this._getTarball(requestSettings, config.wp.version)
 			.pipe(gunzip())
 			.pipe(this._extractTarball(config.wp.path));
 
@@ -194,11 +193,7 @@ module.exports = {
 
 		path = path || './';
 
-		var config = Object.assign(
-			{},
-			defaultConfig
-		);
-
+		var config = Object.assign({},defaultConfig);
 		config.wp.path = path;
 
 		var requestSettings = {
@@ -218,9 +213,11 @@ module.exports = {
 			if (!error && response.statusCode === 200) {
 
 				var latestVersion = JSON.parse(body)[0].name;
+
 				if (latestVersion !== currentVersion) {
 
-					wpa._download(config, latestVersion);
+					config.wp.version = latestVersion;
+					wpa._download(config);
 
 				} else {
 
