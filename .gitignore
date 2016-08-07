@@ -59,7 +59,7 @@ jspm_packages
 .tern-project
 
 # Wordpress install test dir
-wordpress
+wordpress*
 
 # Man file
 wpa-cli.1
